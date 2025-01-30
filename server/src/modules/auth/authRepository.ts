@@ -6,6 +6,7 @@ interface User {
   email: string;
   password: string;
   username: string;
+  avatar_url?: string;
 }
 
 class AuthRepository {

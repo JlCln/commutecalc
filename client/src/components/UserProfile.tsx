@@ -13,6 +13,10 @@ export default function UserProfile() {
   });
   const [message, setMessage] = useState("");
 
+  const isFormValid = () => {
+    return formData.password !== "";
+  };
+
   const handleAvatarChange = async (file: File) => {
     const formData = new FormData();
     formData.append("avatar", file);
@@ -29,7 +33,7 @@ export default function UserProfile() {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to update avatar");
+      if (!response.ok) throw new Error("Une erreur est survenue ⛔");
 
       const data = await response.json();
 
@@ -47,9 +51,9 @@ export default function UserProfile() {
         );
       }
 
-      setMessage("Avatar updated successfully!");
+      setMessage("Profil mis à jour ✅");
     } catch (error) {
-      setMessage("Failed to update avatar");
+      setMessage("Une erreur est survenue ⛔");
     }
   };
 
@@ -68,10 +72,33 @@ export default function UserProfile() {
         },
       );
 
-      if (!response.ok) throw new Error("Update failed");
-      setMessage("Profile updated successfully!");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Une erreur est survenue ⛔");
+      }
+
+      await response.json();
+
+      if (user) {
+        const updatedUser = {
+          ...user,
+          email: formData.email,
+          username: formData.username,
+        };
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
+
+      setMessage("Profil mis à jour ✅");
+      setFormData((prev) => ({
+        ...prev,
+        password: "",
+        newPassword: "",
+      }));
     } catch (error) {
-      setMessage("Failed to update profile");
+      setMessage(
+        error instanceof Error ? error.message : "Une erreur est survenue ⛔",
+      );
     }
   };
 
@@ -147,7 +174,11 @@ export default function UserProfile() {
           Pour toute modification souhaitée, veuillez entrer votre mot de passe
           actuel.
         </p>
-        <button type="submit" className="form-submit-button">
+        <button
+          type="submit"
+          className={`form-submit-button ${!isFormValid() ? "disabled" : ""}`}
+          disabled={!isFormValid()}
+        >
           Modifier mon Profil
         </button>
       </form>

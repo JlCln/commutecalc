@@ -1,10 +1,4 @@
-import {
-  type ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 
 interface User {
   id: number;
@@ -29,16 +23,21 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUserState] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem("token"),
+  );
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
+  const setUser = useCallback((newUser: User | null) => {
+    setUserState(newUser);
+    if (newUser) {
+      localStorage.setItem("user", JSON.stringify(newUser));
+    } else {
+      localStorage.removeItem("user");
     }
   }, []);
 
@@ -57,10 +56,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const data = await response.json();
-    setUser(data.user);
+    const userWithAvatar = {
+      ...data.user,
+      avatar_url: data.user.avatar_url || null,
+    };
+
+    setUser(userWithAvatar);
     setToken(data.token);
     localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem("user", JSON.stringify(userWithAvatar));
   };
 
   const register = async (
@@ -131,18 +135,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        token,
         setUser,
+        token,
         login,
-        register,
         logout,
+        register,
         verifyAuth,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);

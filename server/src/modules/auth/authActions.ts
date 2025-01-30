@@ -6,8 +6,8 @@ import authRepository from "./authRepository";
 const login: RequestHandler = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const user = await authRepository.findByEmail(email);
 
+    const user = await authRepository.findByEmail(email);
     if (!user) {
       res.status(401).json({ message: "Invalid credentials" });
       return;
@@ -24,9 +24,15 @@ const login: RequestHandler = async (req, res, next) => {
       process.env.APP_SECRET || "default-secret",
       { expiresIn: "1h" },
     );
+
     res.json({
       token,
-      user: { id: user.id, email: user.email, username: user.username },
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        avatar_url: user.avatar_url,
+      },
     });
   } catch (err) {
     next(err);

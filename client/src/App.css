@@ -1085,3 +1085,13 @@ body::-webkit-scrollbar {
     flex: 1;
   }
 }
+
+.form-submit-button.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-submit-button:disabled {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
