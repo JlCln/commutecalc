@@ -89,10 +89,13 @@ export default function UserProfile() {
           size="large"
         />
       </div>
-      <h2>Edit Profile</h2>
+      <h2 className="profile-title">
+        Bonjour {user?.username}, retrouvez ici les informations de votre
+        compte.
+      </h2>
       <form onSubmit={handleSubmit} className="profile-form">
         <div className="form-group">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">Votre adresse email</label>
           <input
             type="email"
             id="email"
@@ -104,7 +107,7 @@ export default function UserProfile() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="username">Username</label>
+          <label htmlFor="username">Votre nom d'utilisateur</label>
           <input
             type="text"
             id="username"
@@ -116,7 +119,7 @@ export default function UserProfile() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="current-password">Current Password</label>
+          <label htmlFor="current-password">Mot de passe actuel</label>
           <input
             type="password"
             id="current-password"
@@ -128,7 +131,9 @@ export default function UserProfile() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="new-password">New Password (optional)</label>
+          <label htmlFor="new-password">
+            Nouveau mot de passe (facultatif)
+          </label>
           <input
             type="password"
             id="new-password"
@@ -138,8 +143,13 @@ export default function UserProfile() {
             }
           />
         </div>
-
-        <button type="submit">Update Profile</button>
+        <p className="password-hint">
+          Pour toute modification souhaitée, veuillez entrer votre mot de passe
+          actuel.
+        </p>
+        <button type="submit" className="form-submit-button">
+          Modifier mon Profil
+        </button>
       </form>
       {message && <div className="message">{message}</div>}
     </motion.div>

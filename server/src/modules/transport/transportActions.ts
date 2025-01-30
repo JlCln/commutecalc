@@ -28,9 +28,13 @@ const calculateCommuteStats: RequestHandler = async (req, res, next) => {
       days_of_week: "MON,TUE,WED,THU,FRI",
     };
 
-    await transportRepository.createCommuteRecord(record);
+    const result = await transportRepository.createCommuteRecord(record);
     const stats = await transportRepository.getCommuteStats(req.userId);
-    res.json(stats);
+
+    res.json({
+      ...stats,
+      id: result.insertId,
+    });
   } catch (err) {
     next(err);
   }
@@ -50,12 +54,52 @@ const getUserStats: RequestHandler = async (req, res, next) => {
 
 const getDetailedStats: RequestHandler = async (req, res, next) => {
   try {
-    if (!req.userId) {
-      throw new Error("User ID is required");
+    const userId = req.userId;
+
+    if (!userId) {
+      res.status(401).json({ message: "Authentication required" });
+      return;
     }
 
-    const stats = await transportRepository.getDetailedStats(req.userId);
+    const stats = await transportRepository.getDetailedStats(userId);
     res.json(stats);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteCommuteRecord: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.userId;
+    const recordId = Number.parseInt(req.params.recordId, 10);
+
+    if (!userId) {
+      res.status(401).json({ message: "Authentication required" });
+      return;
+    }
+
+    if (Number.isNaN(recordId)) {
+      res.status(400).json({ message: "Invalid record ID" });
+      return;
+    }
+
+    await transportRepository.deleteCommuteRecord(userId, recordId);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteAllStats: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.userId;
+    if (!userId) {
+      res.status(401).json({ message: "Authentication required" });
+      return;
+    }
+
+    await transportRepository.deleteAllStats(userId);
+    res.status(200).json({ message: "All stats deleted successfully" });
   } catch (err) {
     next(err);
   }
@@ -66,4 +110,6 @@ export default {
   calculateCommuteStats,
   getUserStats,
   getDetailedStats,
+  deleteCommuteRecord,
+  deleteAllStats,
 };

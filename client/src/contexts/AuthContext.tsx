@@ -16,7 +16,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  setUser: (user: User | null) => void; // Add this
+  setUser: (user: User | null) => void;
   login: (email: string, password: string) => Promise<void>;
   register: (
     email: string,
@@ -132,7 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         token,
-        setUser, // Add this
+        setUser,
         login,
         register,
         logout,

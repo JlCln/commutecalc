@@ -9,7 +9,7 @@ export default function WelcomePage() {
     <div className="welcome-page">
       <div className="content">
         <div className="welcome-text">
-          <h1>Bienvenue sur Commute Planner</h1>
+          <h1>Bienvenue sur Commute Calc'</h1>
           <p>
             Trackez votre temps de trajet quotidien et optimisez vos
             déplacements.
@@ -19,28 +19,24 @@ export default function WelcomePage() {
             avec vos amis.
           </p>
           <p>Authentifiez vous pour débuter !</p>
-        </div>
-
-        <div className="auth-container">
-          <div className="auth-toggle">
+          <div className="auth-buttons">
             <button
               type="button"
-              className={`toggle-btn ${showLogin ? "active" : ""}`}
+              className={`auth-button ${showLogin ? "active" : ""}`}
               onClick={() => setShowLogin(true)}
             >
-              Login
+              Connexion
             </button>
             <button
               type="button"
-              className={`toggle-btn ${!showLogin ? "active" : ""}`}
+              className={`auth-button ${!showLogin ? "active" : ""}`}
               onClick={() => setShowLogin(false)}
             >
-              Register
+              Inscription
             </button>
           </div>
-
-          {showLogin ? <Login /> : <Register />}
         </div>
+        <div className="auth-form">{showLogin ? <Login /> : <Register />}</div>
       </div>
     </div>
   );

@@ -21,7 +21,7 @@ export default function Login() {
 
   return (
     <form onSubmit={handleSubmit} className="auth-form">
-      <h2>Login</h2>
+      <h2>Connexion</h2>
       {error && <div className="error">{error}</div>}
       <input
         type="email"
@@ -35,7 +35,7 @@ export default function Login() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button type="submit">Login</button>
+      <button type="submit">Connexion</button>
     </form>
   );
 }

@@ -17,9 +17,9 @@ export default function Navigation({ activeTab, setActiveTab }: NavProps) {
   };
 
   const menuItems = [
-    { id: "calc", icon: "📊", label: "Calculator" },
-    { id: "stats", icon: "📈", label: "Statistics" },
-    { id: "profile", icon: "👤", label: "Profile" },
+    { id: "calc", icon: "📊", label: "Votre trajet" },
+    { id: "stats", icon: "📈", label: "Vos stats" },
+    { id: "profile", icon: "👤", label: "Votre profil" },
   ];
 
   return (
@@ -48,7 +48,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavProps) {
             onClick={handleLogout}
           >
             <span className="icon">🚪</span>
-            <span className="label">Logout</span>
+            <span className="label">Déconnexion</span>
           </button>
         </motion.li>
       </ul>

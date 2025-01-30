@@ -24,6 +24,12 @@ export function useTransportStops() {
 
   useEffect(() => {
     const fetchStops = async () => {
+      if (!token) {
+        setError("Authentication required");
+        setLoading(false);
+        return;
+      }
+
       const cacheKey = "transport_stops";
       const cachedData = cache.get(cacheKey);
 
@@ -44,12 +50,13 @@ export function useTransportStops() {
         );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch stops");
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
         cache.set(cacheKey, { data, timestamp: Date.now() });
         setStops(data);
+        setError("");
       } catch (err) {
         setError("Failed to load transport stops");
         console.error(err);

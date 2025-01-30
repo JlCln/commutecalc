@@ -1,10 +1,10 @@
-import express from "express";
+import { Router } from "express";
 import authMiddleware from "./middleware/auth";
 import authActions from "./modules/auth/authActions";
 import transportActions from "./modules/transport/transportActions";
 import userActions from "./modules/user/userActions";
 
-const router = express.Router();
+const router = Router();
 
 router.get("/api/auth/verify", authMiddleware, authActions.verify);
 router.post("/api/auth/login", authActions.login);
@@ -26,5 +26,16 @@ router.get(
 );
 router.put("/api/user/update", authMiddleware, userActions.updateUser);
 router.post("/api/user/avatar", authMiddleware, userActions.updateAvatar);
+
+router.delete(
+  "/api/commute/stats-all",
+  authMiddleware,
+  transportActions.deleteAllStats,
+);
+router.delete(
+  "/api/commute/stats/:recordId",
+  authMiddleware,
+  transportActions.deleteCommuteRecord,
+);
 
 export default router;

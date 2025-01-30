@@ -1,29 +1,15 @@
-import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useContext, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { useStats } from "../contexts/StatsContext";
+import { TabContext } from "../contexts/TabContext";
 import { useTransportStops } from "../hooks/useTransportStops";
-import BackgroundLines from "./BackgroundLines";
 
 interface TransportStop {
   id: number;
   name: string;
   latitude: number;
   longitude: number;
-}
-
-interface CommuteStats {
-  dailyMinutes: number;
-  weeklyMinutes: number;
-  monthlyMinutes: number;
-  yearlyMinutes: number;
-}
-
-interface UserStats {
-  totalCommutes: number;
-  avgDuration: number;
-  mostFrequentRoute: {
-    startStop: string;
-    endStop: string;
-  };
 }
 
 function calculateDuration(start: TransportStop, end: TransportStop): number {
@@ -41,38 +27,18 @@ function calculateDuration(start: TransportStop, end: TransportStop): number {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c;
 
-  return Math.round(distance * 2);
+  const speedInKmPerHour = 9;
+  const timeInHours = distance / speedInKmPerHour;
+  const timeInMinutes = Math.round(timeInHours * 60);
+
+  return Math.max(timeInMinutes, 1);
 }
 
 export default function CommuteCalculator() {
-  const { stops, loading, error } = useTransportStops();
-  const [stats, setStats] = useState<CommuteStats | null>(null);
-  const { token } = useAuth();
+  const { stops, loading, error: stopsError } = useTransportStops();
+  const { token, user } = useAuth();
+  const { setLastCalculation } = useStats();
   const [calculationError, setCalculationError] = useState<string | null>(null);
-  const [userStats, setUserStats] = useState<UserStats | null>(null);
-
-  useEffect(() => {
-    const fetchUserStats = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/commute/stats`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (!response.ok) throw new Error("Failed to fetch stats");
-        const data = await response.json();
-        setUserStats(data);
-      } catch (error) {
-        console.error("Failed to fetch user statistics:", error);
-      }
-    };
-
-    fetchUserStats();
-  }, [token]);
 
   const [formState, setFormState] = useState({
     date: new Date().toISOString().split("T")[0],
@@ -96,35 +62,32 @@ export default function CommuteCalculator() {
       endStop: "",
     };
 
-    if (!formState.date) {
-      errors.date = "Date is required";
-    }
-    if (!formState.time) {
-      errors.time = "Time is required";
-    }
-    if (!formState.startStop) {
-      errors.startStop = "Start location is required";
-    }
-    if (!formState.endStop) {
-      errors.endStop = "End location is required";
-    }
+    if (!formState.date) errors.date = "Date requise";
+    if (!formState.time) errors.time = "Heure requise";
+    if (!formState.startStop) errors.startStop = "Lieu de départ requis";
+    if (!formState.endStop) errors.endStop = "Lieu d'arrivée requis";
+
     if (
       formState.startStop === formState.endStop &&
       formState.startStop !== ""
     ) {
-      errors.endStop = "Start and end locations must be different";
+      errors.endStop =
+        "Les lieux de départ et d'arrivée doivent être différents";
     }
 
     setFormErrors(errors);
     return !Object.values(errors).some((error) => error !== "");
   };
 
+  interface TabContextType {
+    setActiveTab: (tab: string) => void;
+  }
+
+  const { setActiveTab } = useContext(TabContext) as TabContextType;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       const startLocation = stops.find(
@@ -133,7 +96,7 @@ export default function CommuteCalculator() {
       const endLocation = stops.find((s) => s.id === Number(formState.endStop));
 
       if (!startLocation || !endLocation) {
-        throw new Error("Invalid stops selected");
+        throw new Error("Arrêts invalides");
       }
 
       const calculatedDuration = calculateDuration(startLocation, endLocation);
@@ -147,8 +110,8 @@ export default function CommuteCalculator() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            startStopId: formState.startStop,
-            endStopId: formState.endStop,
+            startStopId: startLocation.id,
+            endStopId: endLocation.id,
             departureTime: formState.time,
             selectedDate: formState.date,
             average_duration_minutes: calculatedDuration,
@@ -156,32 +119,46 @@ export default function CommuteCalculator() {
         },
       );
 
-      if (!response.ok) {
-        throw new Error("Calculation failed");
-      }
+      if (!response.ok) throw new Error("Erreur lors du calcul");
 
       const data = await response.json();
-      setStats(data);
+
+      setLastCalculation({
+        id: data.id,
+        userId: user?.id || 0,
+        calculatedDuration,
+        startStop: startLocation.name,
+        endStop: endLocation.name,
+        departureTime: formState.time,
+        selectedDate: formState.date,
+      });
+
+      setActiveTab("stats");
     } catch (err) {
-      setCalculationError("Failed to calculate commute time");
+      setCalculationError("Erreur lors du calcul du temps de trajet");
       console.error(err);
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="loading-state">
         <div className="spinner" />
-        <p>Loading transport stops...</p>
+        <p>Chargement des arrêts...</p>
       </div>
     );
+  }
 
-  if (error) return <div className="error">{error}</div>;
+  if (stopsError) return <div className="error">{stopsError}</div>;
 
   return (
-    <div className="commute-calculator">
-      <BackgroundLines className="dashboard-lines" />
-      <h2>Calculate Your Commute Time</h2>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="commute-calculator"
+    >
+      <h2 className="commute-title">Ajoutez votre trajet</h2>
       <form onSubmit={handleSubmit} className="commute-form">
         <div className="form-group">
           <label htmlFor="date">Date</label>
@@ -201,7 +178,7 @@ export default function CommuteCalculator() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="time">Departure Time</label>
+          <label htmlFor="time">Horaire de départ</label>
           <input
             type="time"
             id="time"
@@ -217,7 +194,7 @@ export default function CommuteCalculator() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="startStop">Start Location</label>
+          <label htmlFor="startStop">Lieu de départ</label>
           <select
             id="startStop"
             value={formState.startStop}
@@ -226,7 +203,7 @@ export default function CommuteCalculator() {
             }
             className={formErrors.startStop ? "error" : ""}
           >
-            <option value="">Select start location</option>
+            <option value="">Choisissez votre arrêt</option>
             {stops.map((stop) => (
               <option key={stop.id} value={stop.id}>
                 {stop.name}
@@ -239,7 +216,7 @@ export default function CommuteCalculator() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="endStop">End Location</label>
+          <label htmlFor="endStop">Lieu d'arrivée</label>
           <select
             id="endStop"
             value={formState.endStop}
@@ -248,7 +225,7 @@ export default function CommuteCalculator() {
             }
             className={formErrors.endStop ? "error" : ""}
           >
-            <option value="">Select end location</option>
+            <option value="">Choisissez votre arrêt</option>
             {stops.map((stop) => (
               <option key={stop.id} value={stop.id}>
                 {stop.name}
@@ -261,33 +238,13 @@ export default function CommuteCalculator() {
         </div>
 
         <button type="submit" className="submit-button">
-          Calculate
+          Calculer mon trajet
         </button>
       </form>
 
       {calculationError && (
         <div className="error-message">{calculationError}</div>
       )}
-      {stats && (
-        <div className="stats">
-          <h3>Your Commute Statistics</h3>
-          <p>Daily: {stats.dailyMinutes} minutes</p>
-          <p>Weekly: {stats.weeklyMinutes} minutes</p>
-          <p>Monthly: {stats.monthlyMinutes} minutes</p>
-          <p>Yearly: {stats.yearlyMinutes} minutes</p>
-        </div>
-      )}
-      {userStats && (
-        <div className="user-stats">
-          <h3>Your Overall Statistics</h3>
-          <p>Total Commutes: {userStats.totalCommutes}</p>
-          <p>Average Duration: {Math.round(userStats.avgDuration)} minutes</p>
-          <p>
-            Most Frequent Route: {userStats.mostFrequentRoute.startStop} to{" "}
-            {userStats.mostFrequentRoute.endStop}
-          </p>
-        </div>
-      )}
-    </div>
+    </motion.div>
   );
 }
