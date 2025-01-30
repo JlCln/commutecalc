@@ -1,13 +1,10 @@
-// to make the file a module and avoid the TypeScript error
-export type {};
+import { N } from "@faker-js/faker/dist/airline-C5Qwd7_q";
 
 declare global {
   namespace Express {
     export interface Request {
       /* ************************************************************************* */
-      // Add your custom properties here, for example:
-      //
-      // user?: { ... }
+      userId?: number;
       /* ************************************************************************* */
     }
   }
