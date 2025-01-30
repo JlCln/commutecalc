@@ -1,7 +1,7 @@
 # 🚇 Commute Calculator
 
 ## 📝 Le contexte du projet
-A web application designed to help users calculate and track their daily commute times using public transportation. This project was developed as part of the Wild Code School curriculum (v7.1.7) following the React-Express-MySQL architecture.
+Une application web conçue pour aider les utilisateurs à calculer et suivre leurs temps de trajet quotidiens en transport en commun. Ce projet a été développé dans le cadre du programme de la Wild Code School (v7.1.7) suivant l'architecture React-Express-MySQL. Ce projet est désigné pour être une petite présentation pour le Checkpoint 4, qui est un résumé de l'ensemble des technologies étudiées durant le programme de la formation Bootcamp JS (4 mois).
 
 ## ✨ Fonctionnalités développées
 
