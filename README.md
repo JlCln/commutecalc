@@ -54,6 +54,7 @@ erDiagram
         string password_hash
         string username
         datetime created_at
+        string avatar_url
     }
     TRANSPORT_STOP {
         int id PK
@@ -114,7 +115,7 @@ cp .env.example .env
 
 4. Set up de la base de données
 ```bash
-mysql -u root -p < server/database/schema.sql
+mysql -u (votreusername) -p < server/database/schema.sql
 ```
 
 ## 🎯 Faire (enfin) tourner l'application !
@@ -124,6 +125,7 @@ mysql -u root -p < server/database/schema.sql
 1. Démarrer le serveur en back
 ```bash
 cd server
+npm run db:migrate
 npm run dev
 ```
 
