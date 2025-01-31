@@ -6,38 +6,44 @@ Une application web conçue pour aider les utilisateurs à calculer et suivre le
 ## ✨ Fonctionnalités développées
 
 ### 🔐 Authentification
-- Inscription utilisateur
-- Connexion/déconnexion sécurisée
-- Routes protégées
+- Inscription utilisateur avec validation
+- Connexion/déconnexion sécurisée avec JWT
+- Gestion de profil utilisateur avec avatar
+- Routes protégées et persistance de session
 
 ### 📍 Gestion des Transports
 - Visualisation des arrêts disponibles
 - Sélection des points de départ et d'arrivée
-- Calcul des distances entre les arrêts
+- Validation des arrêts différents
+- Gestion des états de chargement
 
 ### ⏱ Suivi des Trajets
-- Calcul de la durée des trajets
-- Statistiques quotidiennes
+- Calcul automatique de la durée des trajets
+- Sélection de date et heure de départ
 - Historique des déplacements
+- Partage de trajets
 
 ### 📊 Statistiques Personnelles
-- Historique complet des trajets
-- Durée moyenne des déplacements
-- Itinéraires les plus fréquents
+- Vue détaillée du dernier trajet calculé
+- Statistiques globales (temps total, trajets fréquents)
+- Analyses détaillées (quotidien, hebdomadaire, mensuel)
+- Possibilité de supprimer l'historique
 
 ## 🛠 Les technos utilisées
 - **En Front :**
-  - React
-  - TypeScript
-  - Vite
-  - React Router DOM
-  - Context API
+  - React avec TypeScript
+  - Vite pour le build
+  - React Router DOM pour la navigation
+  - Context API pour la gestion des states
+  - Framer Motion pour les animations
+  - LocalStorage pour la persistance de certaines données
 
 - **Du côté Back :**
-  - Node.js
-  - Express
-  - MySQL
-  - JSON Web Token (JWT)
+  - Node.js avec Express
+  - MySQL pour la base de données
+  - JWT pour l'authentification
+  - Multer pour la gestion des fichiers
+  - Bcrypt pour le hachage des mots de passe
 
 ## 📊 Database Model
 ```mermaid
