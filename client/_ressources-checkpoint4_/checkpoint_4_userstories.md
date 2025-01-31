@@ -113,14 +113,14 @@
 # 🔮 Roadmap - Futures Fonctionnalités à imaginer
 
 ## 🗺️ Thématique : Amélioration des Transports
-Proposition 1. **Carte Interactive** 
+1. **Carte Interactive** 
     - En tant qu'utilisateur
     - Je veux visualiser les arrêts sur une carte
     - Afin de mieux planifier mes trajets
     - *Proposition d'implémentation :*
       - Intégration de Leaflet ou Google Maps API
 
-Proposition 2. **Favoris de Trajets**
+2. **Favoris de Trajets**
     - En tant qu'utilisateur régulier
     - Je veux sauvegarder mes trajets favoris
     - Afin d'y accéder rapidement
@@ -130,7 +130,7 @@ Proposition 2. **Favoris de Trajets**
       - Accès rapide depuis le dashboard
 
 ## 📊 Thématique : Analyses Avancées
-Proposition 1. **Prévisions de Trafic**
+1. **Prévisions de Trafic**
     - En tant que voyageur
     - Je veux voir les tendances de temps de trajet
     - Afin de choisir le meilleur moment
@@ -139,7 +139,7 @@ Proposition 1. **Prévisions de Trafic**
       - Visualisation avec graphiques interactifs
       - Recommandations
 
-Proposition 2. **Export de Données**
+2. **Export de Données**
     - En tant qu'utilisateur
     - Je veux exporter mes statistiques
     - Afin de les analyser ailleurs
@@ -148,7 +148,7 @@ Proposition 2. **Export de Données**
       - Sélection de période personnalisée
 
 ## 🤝 Thématique : Social
-Proposition 1. **Groupes de Trajet**
+1. **Groupes de Trajet**
     - En tant qu'utilisateur
     - Je veux créer des groupes de contact
     - Afin de partager mes trajets avec d'autres
@@ -156,7 +156,7 @@ Proposition 1. **Groupes de Trajet**
       - Système de groupes privés
       - Chat intégré
 
-Proposition 2. **Comparaison Communautaire**
+2. **Comparaison Communautaire**
     - En tant qu'utilisateur
     - Je veux comparer mes stats avec la communauté
     - Afin de situer mes habitudes
