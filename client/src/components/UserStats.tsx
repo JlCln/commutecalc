@@ -33,7 +33,7 @@ export interface DetailedStats {
 
 interface OverallStats {
   totalDuration: number;
-  totalRoutes: number;
+  totalCommutes: number;
   mostFrequentRoute: {
     startStop: string;
     endStop: string;
@@ -96,7 +96,7 @@ const StatsSection = ({
 
 const defaultOverallStats: OverallStats = {
   totalDuration: 0,
-  totalRoutes: 0,
+  totalCommutes: 0,
   mostFrequentRoute: {
     startStop: "",
     endStop: "",
@@ -350,7 +350,7 @@ export default function UserStats() {
             </p>
             <p>
               🔢 <strong>Nombre total</strong> de trajets effectués:{" "}
-              {overallStats.totalRoutes}
+              {overallStats.totalCommutes}
             </p>
             {overallStats.mostFrequentRoute.count > 0 ? (
               <>
